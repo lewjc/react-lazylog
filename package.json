@@ -1,9 +1,9 @@
 {
-  "name": "react-lazylog",
-  "version": "4.5.3",
+  "name": "react-combilazylog",
+  "version": "4.5.4",
   "description": "React Lazy Logviewer",
   "license": "MPL-2.0",
-  "repository": "mozilla-frontend-infra/react-lazylog",
+  "repository": "lewjc/react-lazylog",
   "main": "build/index.js",
   "files": [
     "build",
@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@mattiasbuelens/web-streams-polyfill": "^0.2.0",
+    "@neutrinojs/react-components": "^9.5.0",
     "fetch-readablestream": "^0.2.0",
     "immutable": "^3.8.2",
     "mitt": "^1.1.2",
