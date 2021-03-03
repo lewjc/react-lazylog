@@ -202,6 +202,7 @@ export default class LazyLog extends Component {
       overflow: 'initial',
     },
     style: {},
+    colourRules: null,
     extraLines: 0,
     onError: null,
     onHighlight: null,
@@ -618,6 +619,22 @@ export default class LazyLog extends Component {
     );
   }
 
+  checkColourRules = (style, data) => {
+    let lineStyle = null;
+
+    this.props.colourRules.forEach(rule => {
+      if (rule.rule.test(data[0].text)) {
+        lineStyle = {
+          ...style,
+          backgroundColor: rule.backgroundColour ? rule.backgroundColour : null,
+          color: rule.textColour ? rule.textColour : 'inherit',
+        };
+      }
+    });
+
+    return lineStyle;
+  };
+
   renderRow = ({ key, index, style }) => {
     const {
       rowHeight,
@@ -637,20 +654,26 @@ export default class LazyLog extends Component {
     const number = isFilteringLinesWithMatches
       ? resultLineUniqueIndexes[index]
       : index + 1 + offset;
+    const data = ansiparse(decode(linesToRender.get(index)));
+    let lineStyle = null;
+
+    if (this.props.colourRules && data.length > 0) {
+      lineStyle = this.checkColourRules(style, data);
+    }
 
     return (
       <Line
         className={lineClassName}
         highlightClassName={highlightLineClassName}
         rowHeight={rowHeight}
-        style={style}
+        style={lineStyle === null ? style : lineStyle}
         key={key}
         number={number}
         formatPart={this.handleFormatPart()}
         selectable={selectableLines}
         highlight={highlight.includes(number)}
         onLineNumberClick={this.handleHighlight}
-        data={ansiparse(decode(linesToRender.get(index)))}
+        data={data}
       />
     );
   };
