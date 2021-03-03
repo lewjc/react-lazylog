@@ -620,15 +620,19 @@ export default class LazyLog extends Component {
   }
 
   checkColourRules = (style, data) => {
+    let lineStyle = null;
+
     this.props.colourRules.forEach(rule => {
       if (rule.rule.test(data[0].text)) {
-        return {
+        lineStyle = {
           ...style,
           backgroundColor: rule.backgroundColour ? rule.backgroundColour : null,
           color: rule.textColour ? rule.textColour : 'inherit',
         };
       }
     });
+
+    return lineStyle;
   };
 
   renderRow = ({ key, index, style }) => {
