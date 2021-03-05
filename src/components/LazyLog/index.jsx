@@ -29,7 +29,9 @@ import request from '../../request';
 import stream from '../../stream';
 import websocket from '../../websocket';
 import { searchLines } from '../../search';
-import { lazyLog, searchMatch } from './index.module.css';
+import { lazyLog, searchMatch, flexItem } from './index.module.css';
+import Toolbar from '../Toolbar';
+import ExportButton from '../Export';
 
 // Setting a hard limit on lines since browsers have trouble with heights
 // starting at around 16.7 million pixels and up
@@ -117,6 +119,11 @@ export default class LazyLog extends Component {
      */
     enableSearch: bool,
     /**
+     * Enable the export feature.
+     */
+    enableExport: bool,
+
+    /**
      * Execute a function against each string part of a line,
      * returning a new line part. Is passed a single argument which is
      * the string part to manipulate, should return a new string
@@ -194,6 +201,7 @@ export default class LazyLog extends Component {
     highlight: null,
     selectableLines: false,
     enableSearch: false,
+    enableExport: true,
     rowHeight: 19,
     overscanRowCount: 100,
     containerStyle: {
@@ -545,6 +553,27 @@ export default class LazyLog extends Component {
     return this.props.formatPart;
   };
 
+  handleExport = (startIndex, endIndex) => {
+    const { lines } = this.state;
+    const exportableLines = lines
+      .slice(startIndex - 1, endIndex)
+      .map(line => ansiparse(decode(line)))
+      .map(line => line[0].text)
+      .join('\r\n');
+
+    this.generateLogFile(exportableLines);
+  };
+
+  generateLogFile = lines => {
+    const a = document.createElement('a');
+    const file = new Blob([lines], { type: "'text/plain" });
+
+    a.href = URL.createObjectURL(file);
+    a.download = `combilog-${Date.now()}.log`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   renderError() {
     const {
       url,
@@ -723,7 +752,7 @@ export default class LazyLog extends Component {
   };
 
   render() {
-    const { enableSearch } = this.props;
+    const { enableSearch, enableExport } = this.props;
     const {
       resultLines,
       isFilteringLinesWithMatches,
@@ -734,16 +763,28 @@ export default class LazyLog extends Component {
 
     return (
       <Fragment>
-        {enableSearch && (
-          <SearchBar
-            filterActive={isFilteringLinesWithMatches}
-            onSearch={this.handleSearch}
-            onClearSearch={this.handleClearSearch}
-            onFilterLinesWithMatches={this.handleFilterLinesWithMatches}
-            resultsCount={resultLines.length}
-            disabled={count === 0}
-          />
-        )}
+        <Toolbar>
+          <div className={`react-lazylog-toolbar-left ${flexItem}`}>
+            {enableExport && (
+              <ExportButton
+                disabled={count === 0}
+                onExport={this.handleExport}
+              />
+            )}
+          </div>
+          <div className={`react-lazylog-toolbar-right ${flexItem}`}>
+            {enableSearch && (
+              <SearchBar
+                filterActive={isFilteringLinesWithMatches}
+                onSearch={this.handleSearch}
+                onClearSearch={this.handleClearSearch}
+                onFilterLinesWithMatches={this.handleFilterLinesWithMatches}
+                resultsCount={resultLines.length}
+                disabled={count === 0}
+              />
+            )}
+          </div>
+        </Toolbar>
         <AutoSizer
           disableHeight={this.props.height !== 'auto'}
           disableWidth={this.props.width !== 'auto'}>

@@ -1,7 +1,5 @@
 .searchBar {
   display: flex;
-  align-items: center;
-  justify-content: flex-end;
   font-family: "Monaco", monospace;
   font-size: 12px;
   background-color: #222222;
