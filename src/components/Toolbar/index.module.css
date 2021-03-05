@@ -1,0 +1,9 @@
+.toolBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Monaco', monospace;
+  font-size: 12px;
+  background-color: #222222;
+  color: #d6d6d6;
+}
