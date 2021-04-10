@@ -1,0 +1,19 @@
+.fullscreen {
+  display: flex;
+  font-family: 'Monaco', monospace;
+  font-size: 12px;
+  background-color: #222222;
+  color: #d6d6d6;
+}
+
+.button {
+  background: none;
+  border: none;
+  margin-left: 10px;
+  color: #464646;
+  fill: #464646;
+}
+
+.button:focus {
+  border: solid 1px #2c2c2c;
+}
