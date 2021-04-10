@@ -170,9 +170,9 @@ export default class ExportButton extends Component {
             <input
               autoComplete="off"
               type="text"
-              name="Export index start"
+              name="Export Line Start"
               value={index.start === -1 ? '' : index.start}
-              placeholder="Start Index"
+              placeholder="Start Line Number"
               onChange={this.handleStartIndexChange}
               className={`react-lazylog-export-start-idx ${exportInput} ${rightPad} ${
                 error.start.isNaN ? exportInputError : ''
@@ -181,8 +181,8 @@ export default class ExportButton extends Component {
             <input
               autoComplete="off"
               type="text"
-              name="Export index end"
-              placeholder="End Index"
+              name="Export Line End"
+              placeholder="End Line Number"
               value={index.end === -1 ? '' : index.end}
               onChange={this.handleEndIndexChange}
               className={`react-lazylog-export-start-idx ${exportInput} ${
