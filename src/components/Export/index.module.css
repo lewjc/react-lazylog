@@ -14,6 +14,10 @@
   fill: #464646;
 }
 
+.button:focus {
+  border: solid 1px #2c2c2c;
+}
+
 .exportInput {
   background-color: #464646;
   color: #d6d6d6;
