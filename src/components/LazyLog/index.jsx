@@ -1,4 +1,4 @@
-import { Component, Fragment } from 'react';
+import { Component, Fragment, createRef } from 'react';
 import {
   any,
   arrayOf,
@@ -29,9 +29,16 @@ import request from '../../request';
 import stream from '../../stream';
 import websocket from '../../websocket';
 import { searchLines } from '../../search';
-import { lazyLog, searchMatch, flexItem } from './index.module.css';
+import {
+  lazyLog,
+  searchMatch,
+  flexItem,
+  autoHeight,
+  fullscreen,
+} from './index.module.css';
 import Toolbar from '../Toolbar';
 import ExportButton from '../Export';
+import Fullscreen from '../Fullscreen';
 
 // Setting a hard limit on lines since browsers have trouble with heights
 // starting at around 16.7 million pixels and up
@@ -272,7 +279,13 @@ export default class LazyLog extends Component {
 
   state = {
     resultLines: [],
+    fullscreen: false,
   };
+
+  constructor(props) {
+    super(props);
+    this.fullscreenRef = createRef();
+  }
 
   componentDidMount() {
     this.request();
@@ -574,6 +587,28 @@ export default class LazyLog extends Component {
     URL.revokeObjectURL(a.href);
   };
 
+  handleFullScreenChange = () => {
+    const { fullscreen } = this.state;
+    const lazyLog = this.fullscreenRef.current;
+
+    lazyLog.onfullscreenchange = () => {
+      if (!document.fullscreenElement) {
+        this.setState({
+          fullscreen: false,
+        });
+      }
+    };
+
+    if (!fullscreen) {
+      lazyLog.requestFullscreen();
+      this.setState({
+        fullscreen: true,
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
   renderError() {
     const {
       url,
@@ -762,9 +797,14 @@ export default class LazyLog extends Component {
     const rowCount = isFilteringLinesWithMatches ? filteredLines.size : count;
 
     return (
-      <Fragment>
+      <div
+        ref={this.fullscreenRef}
+        className={`react-lazylog-container ${
+          this.props.height === 'auto' ? autoHeight : ''
+        } ${this.state.fullscreen ? fullscreen : ''}`}>
         <Toolbar>
           <div className={`react-lazylog-toolbar-left ${flexItem}`}>
+            <Fullscreen onFullscreenEnter={this.handleFullScreenChange} />
             {enableExport && (
               <ExportButton
                 disabled={count === 0}
@@ -803,7 +843,7 @@ export default class LazyLog extends Component {
             />
           )}
         </AutoSizer>
-      </Fragment>
+      </div>
     );
   }
 }
